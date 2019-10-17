@@ -46,6 +46,8 @@ var jexcel = (function(el, options) {
         minDimensions:[0,0],
         // Allow Export
         allowExport:true,
+        // Jump to next or previous sheet on navigation
+        navigateBetweenSheets:false,
         // Allow column sorting
         columnSorting:true,
         // Allow column dragging
@@ -4315,6 +4317,36 @@ var jexcel = (function(el, options) {
     obj.col = function(cell) {
     }
 
+    obj.jumpToOtherSheet = function (el, direction, column) {
+        const sheetList = Array.from(document.getElementsByClassName('jexcel_container'));
+        if (sheetList.length < 1) {
+            return;
+        }
+
+        var currentIndex;
+        for (var i = 0; i <= sheetList.length; i++) {
+            if (sheetList[i].id === el.id) {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        var nextSheet;
+        if (direction === 'down' && currentIndex !== sheetList.length - 1) {
+            nextSheet = sheetList[currentIndex + 1];
+
+        } else if (direction === 'up' && currentIndex !== 0) {
+            nextSheet = sheetList[currentIndex - 1];
+        }
+
+        if (nextSheet) {
+            el.jexcel.resetSelection(true);
+            nextSheet.jexcel.updateSelectionFromCoords(column, 0);
+            jexcel.current = nextSheet.jexcel;
+            nextSheet.scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
+    }
+
     obj.up = function(shiftKey, ctrlKey) {
         if (shiftKey) {
             if (obj.selectedCell[3] > 0) {
@@ -4323,6 +4355,9 @@ var jexcel = (function(el, options) {
         } else {
             if (obj.selectedCell[1] > 0) {
                 obj.up.visible(0, ctrlKey ? 0 : 1)
+            } else if (obj.options.navigateBetweenSheets) {
+                obj.jumpToOtherSheet(el, 'up', obj.selectedCell[0]);
+                return;
             }
             obj.selectedCell[2] = obj.selectedCell[0];
             obj.selectedCell[3] = obj.selectedCell[1];
@@ -4412,6 +4447,9 @@ var jexcel = (function(el, options) {
         } else {
             if (obj.selectedCell[1] < obj.records.length - 1) {
                 obj.down.visible(0, ctrlKey ? 0 : 1)
+            } else if (obj.options.navigateBetweenSheets) {
+                obj.jumpToOtherSheet(el, 'down', obj.selectedCell[0]);
+                return;
             }
             obj.selectedCell[2] = obj.selectedCell[0];
             obj.selectedCell[3] = obj.selectedCell[1];
