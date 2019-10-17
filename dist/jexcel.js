@@ -6340,6 +6340,7 @@ jexcel.keyDownControls = function(e) {
                                         // Start edition with current content F2
                                         jexcel.current.openEditor(jexcel.current.records[rowId][columnId], false);
                                     } else if ((e.keyCode == 8) ||
+                                               (e.keyCode == 96) ||
                                                (e.keyCode >= 48 && e.keyCode <= 57) ||
                                                (e.keyCode == 187) ||
                                                (jexcel.validLetter(String.fromCharCode(e.keyCode)))) {
