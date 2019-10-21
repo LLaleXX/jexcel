@@ -1422,19 +1422,49 @@ var jexcel = (function(el, options) {
                     // Value
                     var value = empty == true ? '' : obj.options.data[y][x];
 
+                    var keydownEvent = function (e) {
+                        var maxLength = jexcel.current.options.columns[x].maxLength
+                        var elem = e.target;
+                        if ((e.keyCode == 96) ||
+                            (e.keyCode >= 48 && e.keyCode <= 57) ||
+                            (e.keyCode == 187) ||
+                            (jexcel.validLetter(String.fromCharCode(e.keyCode)))) {
+                            var unformattedValue = editor.value
+                                .replace(new RegExp(/\./g, 'g'), '')
+                                .replace(new RegExp(/,/g, 'g'), '.')
+                            if (!e.key.match(/^[\d]+$/) || (unformattedValue && unformattedValue.length >= maxLength)) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }
+                        }
+                    };
+
+                    var changeEvent = function (e) {
+                        var mask = jexcel.current.options.columns[x].mask
+                        var unformattedValue = editor.value
+                            .replace(new RegExp(/\./g, 'g'), '')
+                            .replace(new RegExp(/,/g, 'g'), '.');
+                        if (unformattedValue && !isNaN(unformattedValue)) {
+                            editor.value = parseFloat(unformattedValue).toLocaleString('pt-br');
+                        }
+                    };
+
                     // Basic editor
                     if (obj.options.columns[x].wordWrap != false && (obj.options.wordWrap == true || obj.options.columns[x].wordWrap == true)) {
                         var editor = createEditor('textarea');
                     } else {
                         var editor = createEditor('input');
-                        // Mask
-                        if (obj.options.columns[x].mask) {
-                            editor.setAttribute('data-mask', obj.options.columns[x].mask);
+
+                        if (obj.options.columns[x].type === 'numeric') {
+                            editor.addEventListener('keydown', keydownEvent);
+                            editor.addEventListener('keyup', changeEvent);
                         }
                     }
 
                     editor.value = value;
-                    editor.onblur = function() {
+                    editor.onblur = function () {
+                        editor.removeEventListener('keydown', keydownEvent);
+                        editor.removeEventListener('keyup', changeEvent);
                         obj.closeEditor(cell, true);
                     };
                     editor.focus();
@@ -5985,8 +6015,8 @@ var jexcel = (function(el, options) {
         }
     }
 
-    el.addEventListener("DOMMouseScroll", obj.scrollControls);
-    el.addEventListener("mousewheel", obj.scrollControls);
+    // el.addEventListener("DOMMouseScroll", obj.scrollControls);
+    // el.addEventListener("mousewheel", obj.scrollControls);
 
     el.jexcel = obj;
 
