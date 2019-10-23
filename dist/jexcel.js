@@ -1440,12 +1440,13 @@ var jexcel = (function(el, options) {
                     };
 
                     var changeEvent = function (e) {
-                        var mask = jexcel.current.options.columns[x].mask
                         var unformattedValue = editor.value
                             .replace(new RegExp(/\./g, 'g'), '')
                             .replace(new RegExp(/,/g, 'g'), '.');
                         if (unformattedValue && !isNaN(unformattedValue)) {
                             editor.value = parseFloat(unformattedValue).toLocaleString('pt-br');
+                        } else {
+                            editor.value = '';
                         }
                     };
 
