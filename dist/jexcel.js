@@ -1442,7 +1442,8 @@ var jexcel = (function(el, options) {
                     var changeEvent = function (e) {
                         var unformattedValue = editor.value
                             .replace(new RegExp(/\./g, 'g'), '')
-                            .replace(new RegExp(/,/g, 'g'), '.');
+                            .replace(new RegExp(/,/g, 'g'), '.')
+                            .trim();
                         if (unformattedValue && !isNaN(unformattedValue)) {
                             editor.value = parseFloat(unformattedValue).toLocaleString('pt-br');
                         } else {
