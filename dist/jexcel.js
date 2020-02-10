@@ -1428,6 +1428,9 @@ var jexcel = (function(el, options) {
                         if ((e.keyCode == 96) ||
                             (e.keyCode >= 48 && e.keyCode <= 57) ||
                             (e.keyCode == 187) ||
+                            (e.keyCode == 188) ||
+                            (e.keyCode == 190) ||
+                            (e.keyCode == 191) ||
                             (jexcel.validLetter(String.fromCharCode(e.keyCode)))) {
                             var unformattedValue = editor.value
                                 .replace(new RegExp(/\./g, 'g'), '')
