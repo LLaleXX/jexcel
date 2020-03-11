@@ -5188,6 +5188,7 @@ var jexcel = (function(el, options) {
      * @return null
      */
     obj.setHistory = function(changes) {
+        if (changes.action !== 'setValue') return;
         if (obj.ignoreHistory != true) {
             // Increment and get the current history index
             var index = ++obj.historyIndex;
